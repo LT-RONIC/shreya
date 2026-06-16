@@ -95,20 +95,96 @@
         #reality-screen {
             transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
         }
+
+        /* Game Specific UI Overlays */
+        #game-canvas {
+            image-rendering: pixelated;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+            max-width: 100%;
+            touch-action: none;
+        }
     </style>
 </head>
 <body class="text-white h-screen w-screen flex justify-center items-center bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-gradient-x">
 
     <!-- Reality Screen (Hidden initially, shown after breaking the loop) -->
-    <div id="reality-screen" class="fixed inset-0 z-50 bg-gradient-to-tr from-green-400 to-blue-500 opacity-0 invisible flex flex-col justify-center items-center text-center p-6">
-        <i data-lucide="sun" class="w-24 h-24 text-yellow-300 mb-6 animate-float"></i>
-        <h1 class="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">Welcome Back.</h1>
-        <p class="text-xl md:text-2xl text-white font-medium max-w-lg mb-8 drop-shadow-md">
-            The real world is much more beautiful than a 6-inch screen. Go outside, call a friend, or just look at the sky. 
-        </p>
-        <p class="text-lg text-white/80 font-light italic">
-            Love, your sibling who cares about your brain. ❤️
-        </p>
+    <div id="reality-screen" class="fixed inset-0 z-50 bg-gradient-to-tr from-green-400 to-blue-500 opacity-0 invisible flex flex-col justify-center items-center text-center p-4 overflow-y-auto">
+        
+        <!-- Welcome Screen Sub-Panel -->
+        <div id="reality-welcome-card" class="flex flex-col items-center max-w-lg transition-all duration-700">
+            <i data-lucide="sun" class="w-20 h-20 text-yellow-300 mb-4 animate-float"></i>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-3 drop-shadow-lg">Welcome Back.</h1>
+            <p class="text-lg md:text-xl text-white font-medium max-w-md mb-6 drop-shadow-md">
+                The real world is much more beautiful than a 6-inch screen. Go outside, call a friend, or just look at the sky. 
+            </p>
+            <p class="text-base text-white/80 font-light italic mb-8">
+                Love, your sibling who cares about your brain. ❤️
+            </p>
+
+            <button id="start-game-btn" class="group relative px-6 py-3 bg-slate-900 text-white font-semibold text-md rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                <i data-lucide="gamepad-2" class="w-5 h-5 text-indigo-400"></i>
+                Play Focus Challenge Game
+            </button>
+        </div>
+
+        <!-- Mini-Game Container Card (Hidden by default) -->
+        <div id="game-card" class="hidden flex-col items-center max-w-md w-full glass-panel p-4 rounded-[2rem] border border-white/20 shadow-2xl relative transition-all duration-700">
+            <!-- Game HUD -->
+            <div class="w-full flex justify-between items-center mb-4 px-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs tracking-wider opacity-60 uppercase font-bold">Attention Score:</span>
+                    <span id="game-score" class="text-2xl font-black text-emerald-400">0</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs tracking-wider opacity-60 uppercase font-bold">Best Focus:</span>
+                    <span id="game-highscore" class="text-xl font-bold text-yellow-300">0</span>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full aspect-[4/5] flex justify-center items-center">
+                <canvas id="game-canvas" width="360" height="450"></canvas>
+                
+                <!-- Overlay Screens (Start / Game Over) -->
+                <div id="game-overlay-screen" class="absolute inset-0 bg-black/75 rounded-[1.5rem] flex flex-col justify-center items-center p-6 text-center select-none">
+                    <div id="game-start-prompt" class="flex flex-col items-center">
+                        <span class="text-5xl mb-4 animate-bounce">🧠</span>
+                        <h3 class="text-2xl font-black text-white mb-2">FLAPPY BRAIN</h3>
+                        <p class="text-sm text-gray-300 mb-6">
+                            Dodge the addictive phone screens (Brain Rot) to save your attention span!
+                        </p>
+                        <button id="game-play-btn" class="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 font-bold rounded-full transition-all text-sm flex items-center gap-2 shadow-lg">
+                            <i data-lucide="play" class="w-4 h-4"></i> START SAVING YOUR BRAIN
+                        </button>
+                        <span class="text-xs text-gray-400 mt-4">Tap screen or Spacebar to Jump</span>
+                    </div>
+
+                    <div id="game-over-prompt" class="hidden flex flex-col items-center">
+                        <span class="text-5xl mb-4">🥴</span>
+                        <h3 class="text-2xl font-black text-red-500 mb-1">SCREEN OVERLOAD!</h3>
+                        <p class="text-sm text-gray-300 mb-1">You were caught in the scroll loop!</p>
+                        <p class="text-xs text-indigo-300 mb-6 italic" id="game-encouragement">Your focus lasted longer than an average YT Short though!</p>
+                        
+                        <button id="game-retry-btn" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 font-bold rounded-full transition-all text-sm flex items-center gap-2 shadow-lg">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i> RETRY CHALLENGE
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Control footer -->
+            <p class="text-xs text-white/60 mt-3 flex items-center gap-1">
+                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                Tap anywhere on canvas to rise. Save your brain!
+            </p>
+
+            <!-- Close game back to reality welcome -->
+            <button id="close-game-btn" class="absolute -top-3 -right-3 p-2 bg-red-500 hover:bg-red-600 rounded-full text-white shadow-md transition-transform hover:scale-110">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
     </div>
 
     <!-- Mobile App Container -->
@@ -265,7 +341,6 @@
                 String(seconds).padStart(2, '0');
         }, 1000);
 
-        // --- STREAMING_CHUNK:Adding intersection observer for scroll animations... ---
         // --- Intersection Observer for Animations ---
         const observerOptions = {
             root: document.getElementById('feed'),
@@ -310,7 +385,6 @@
             observer.observe(section);
         });
 
-        // --- STREAMING_CHUNK:Implementing fake buttons and toast notifications... ---
         // --- Fake Action Buttons (Like/Comment) ---
         const fakeActions = document.querySelectorAll('.fake-action');
         const toastContainer = document.getElementById('toast-container');
@@ -340,7 +414,6 @@
             }, 3000);
         }
 
-        // --- STREAMING_CHUNK:Implementing the grand finale button logic... ---
         // --- Break The Loop Logic ---
         const breakBtn = document.getElementById('break-loop-btn');
         const appContainer = document.getElementById('app-container');
@@ -363,6 +436,399 @@
                 document.body.classList.add('from-sky-300', 'to-emerald-200');
             }, 800);
         });
+
+        // --- STREAMING_CHUNK:Initializing the Flappy Brain mini-game engine... ---
+        // --- FLAPPY BRAIN MINI-GAME ENGINE ---
+        
+        // Navigation triggers between Welcome Screen and Game Screen
+        const startGamBtn = document.getElementById('start-game-btn');
+        const closeGameBtn = document.getElementById('close-game-btn');
+        const welcomeCard = document.getElementById('reality-welcome-card');
+        const gameCard = document.getElementById('game-card');
+
+        // Audio Context Setup for procedurally synthesized sounds
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSynthesizedSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'jump') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.12);
+                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.12);
+            } else if (type === 'point') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'hit') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(30, audioCtx.currentTime + 0.4);
+                gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        // Show Game Interface
+        startGamBtn.addEventListener('click', () => {
+            initAudio();
+            welcomeCard.classList.add('opacity-0', 'scale-90');
+            setTimeout(() => {
+                welcomeCard.classList.add('hidden');
+                gameCard.classList.remove('hidden');
+                gameCard.classList.add('flex');
+                setTimeout(() => {
+                    gameCard.classList.remove('opacity-0', 'scale-95');
+                }, 50);
+            }, 400);
+        });
+
+        // Exit Game Interface
+        closeGameBtn.addEventListener('click', () => {
+            gameCard.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                gameCard.classList.remove('flex');
+                gameCard.classList.add('hidden');
+                welcomeCard.classList.remove('hidden');
+                setTimeout(() => {
+                    welcomeCard.classList.remove('opacity-0', 'scale-90');
+                }, 50);
+            }, 400);
+            resetGame();
+        });
+
+        // Game State Variables
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('game-score');
+        const highScoreEl = document.getElementById('game-highscore');
+        const overlayScreen = document.getElementById('game-overlay-screen');
+        const startPrompt = document.getElementById('game-start-prompt');
+        const gameOverPrompt = document.getElementById('game-over-prompt');
+        const playBtn = document.getElementById('game-play-btn');
+        const retryBtn = document.getElementById('game-retry-btn');
+        const encouragementText = document.getElementById('game-encouragement');
+
+        let brain = { x: 60, y: 200, size: 28, gravity: 0.35, lift: -6.5, velocity: 0 };
+        let obstacles = [];
+        let score = 0;
+        let highScore = localStorage.getItem('focus_game_highscore') || 0;
+        let isPlaying = false;
+        let gameLoopId = null;
+        let obstacleTimer = 0;
+        let obstacleInterval = 100; // frames between screen obstacles
+
+        highScoreEl.innerText = highScore;
+
+        // Custom funny encouragement lines based on scores
+        const feedbackMessages = [
+            "Your attention span was only 12 seconds there! Focus!",
+            "You got hit by a cat compilation! Focus!",
+            "You dodged some brain rot, but got hooked by a gameplay loop!",
+            "Whoops! Minecraft parkour in the background distracted you!",
+            "Amazing focus! That's more mindful minutes saved!",
+            "True Zen Master! You have successfully mastered your attention!"
+        ];
+
+        function getEncouragement(score) {
+            if (score < 3) return feedbackMessages[0];
+            if (score < 8) return feedbackMessages[1];
+            if (score < 15) return feedbackMessages[2];
+            if (score < 25) return feedbackMessages[3];
+            if (score < 40) return feedbackMessages[4];
+            return feedbackMessages[5];
+        }
+
+        // --- STREAMING_CHUNK:Implementing the game rendering loop... ---
+        // Game Logic Loop
+        function gameLoop() {
+            if (!isPlaying) return;
+
+            // Update Frame Physics
+            updateGame();
+
+            // Render Game Frame
+            drawGame();
+
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        function updateGame() {
+            // Brain Physics
+            brain.velocity += brain.gravity;
+            brain.y += brain.velocity;
+
+            // Floor & Ceiling Boundaries
+            if (brain.y + brain.size / 2 >= canvas.height) {
+                brain.y = canvas.height - brain.size / 2;
+                gameOver();
+            }
+            if (brain.y - brain.size / 2 <= 0) {
+                brain.y = brain.size / 2;
+                brain.velocity = 0;
+            }
+
+            // Obstacles Spawn
+            obstacleTimer++;
+            if (obstacleTimer >= obstacleInterval) {
+                spawnObstacle();
+                obstacleTimer = 0;
+            }
+
+            // Move and Check Obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= 2.2; // Speed of obstacles
+
+                // Pass hurdle points
+                if (!obstacles[i].passed && obstacles[i].x < brain.x) {
+                    obstacles[i].passed = true;
+                    score++;
+                    scoreEl.innerText = score;
+                    playSynthesizedSound('point');
+                }
+
+                // Check Collisions
+                if (checkCollision(brain, obstacles[i])) {
+                    playSynthesizedSound('hit');
+                    gameOver();
+                }
+
+                // Cleanup Offscreen Obstacles
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        // Check AABB and Circle collision roughly
+        function checkCollision(b, obs) {
+            const brainRadius = b.size / 2 - 2; // slightly forgiving hitbox
+            const brainCenterX = b.x;
+            const brainCenterY = b.y;
+
+            // Test Top Phone Obstacle
+            const topBoxLeft = obs.x;
+            const topBoxRight = obs.x + obs.width;
+            const topBoxTop = 0;
+            const topBoxBottom = obs.topHeight;
+
+            // Test Bottom Phone Obstacle
+            const botBoxLeft = obs.x;
+            const botBoxRight = obs.x + obs.width;
+            const botBoxTop = canvas.height - obs.bottomHeight;
+            const botBoxBottom = canvas.height;
+
+            // Circle-AABB Intersection Helper
+            function isColliding(cx, cy, radius, rx, ry, rw, rh) {
+                let closestX = Math.max(rx, Math.min(cx, rx + rw));
+                let closestY = Math.max(ry, Math.min(cy, ry + rh));
+                let distanceX = cx - closestX;
+                let distanceY = cy - closestY;
+                let distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+                return distanceSquared < (radius * radius);
+            }
+
+            return (
+                isColliding(brainCenterX, brainCenterY, brainRadius, topBoxLeft, topBoxTop, obs.width, topBoxBottom) ||
+                isColliding(brainCenterX, brainCenterY, brainRadius, botBoxLeft, botBoxTop, obs.width, botBoxBottom - botBoxTop)
+            );
+        }
+
+        function spawnObstacle() {
+            const gap = 125; // Space height to navigate through
+            const minHeight = 40;
+            const maxHeight = canvas.height - gap - minHeight;
+            const topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
+            const bottomHeight = canvas.height - gap - topHeight;
+
+            obstacles.push({
+                x: canvas.width,
+                width: 52, // styled as mobile devices
+                topHeight: topHeight,
+                bottomHeight: bottomHeight,
+                passed: false
+            });
+        }
+
+        // --- STREAMING_CHUNK:Adding touch and sound synthesizer logic... ---
+        function drawGame() {
+            // Draw sky/emerald gradient background inside the canvas
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#1e1b4b'); // indigo dark
+            grad.addColorStop(1, '#020617'); // slate dark
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Obstacles (Brain Rot Phones)
+            obstacles.forEach(obs => {
+                // Top Phone Obstacle
+                drawPhone(obs.x, 0, obs.width, obs.topHeight, true);
+                
+                // Bottom Phone Obstacle
+                drawPhone(obs.x, canvas.height - obs.bottomHeight, obs.width, obs.bottomHeight, false);
+            });
+
+            // Draw the Player (Brain Emoji 🧠)
+            ctx.font = `${brain.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.save();
+            ctx.translate(brain.x, brain.y);
+            // Slight tilt based on velocity for aesthetic points!
+            ctx.rotate(brain.velocity * 0.05);
+            ctx.fillText('🧠', 0, 0);
+            ctx.restore();
+        }
+
+        // Draw an ultra-detailed beautiful modern phone obstacle containing shorts icons
+        function drawPhone(x, y, width, height, isTop) {
+            ctx.save();
+            
+            // Outer Bezel of phone (Slate frame)
+            ctx.fillStyle = '#334155';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.roundRect(x, y + (isTop ? -20 : 0), width, height + 20, 8);
+            ctx.fill();
+            ctx.shadowColor = 'transparent'; // Reset shadow
+
+            // inner screen glow red (YouTube Shorts Red)
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            const margin = 4;
+            ctx.roundRect(
+                x + margin, 
+                y + (isTop ? 0 : margin), 
+                width - (margin * 2), 
+                height - margin, 
+                4
+            );
+            ctx.fill();
+
+            // Glass screen sheen
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.beginPath();
+            ctx.moveTo(x + margin, y + (isTop ? 0 : margin));
+            ctx.lineTo(x + width - margin, y + (isTop ? 0 : margin));
+            ctx.lineTo(x + margin, y + height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Play icon (white triangle) in center of the phone screen
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            const centerX = x + width / 2;
+            const centerY = isTop ? y + height - 35 : y + 35;
+            
+            // Draw Youtube Shorts styled custom vector symbol
+            ctx.moveTo(centerX - 6, centerY - 8);
+            ctx.lineTo(centerX + 8, centerY);
+            ctx.lineTo(centerX - 6, centerY + 8);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw a subtle scroll feed indicator bar
+            ctx.fillStyle = 'rgba(255,255,255,0.4)';
+            ctx.fillRect(x + width / 2 - 10, isTop ? y + height - 12 : y + 10, 20, 2);
+
+            ctx.restore();
+        }
+
+        // Core Game Interaction Handling
+        function triggerJump() {
+            if (!isPlaying) return;
+            brain.velocity = brain.lift;
+            playSynthesizedSound('jump');
+        }
+
+        // Tap on canvas or window keyboard triggers
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            triggerJump();
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            triggerJump();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (!isPlaying && !overlayScreen.classList.contains('hidden')) {
+                    if (!startPrompt.classList.contains('hidden')) {
+                        startGame();
+                    } else if (!gameOverPrompt.classList.contains('hidden')) {
+                        startGame();
+                    }
+                } else {
+                    triggerJump();
+                }
+            }
+        });
+
+        // Trigger start
+        playBtn.addEventListener('click', startGame);
+        retryBtn.addEventListener('click', startGame);
+
+        function startGame() {
+            initAudio();
+            resetGame();
+            overlayScreen.classList.add('hidden');
+            isPlaying = true;
+            gameLoop();
+        }
+
+        function resetGame() {
+            brain.y = 200;
+            brain.velocity = 0;
+            obstacles = [];
+            score = 0;
+            scoreEl.innerText = score;
+            obstacleTimer = 0;
+            cancelAnimationFrame(gameLoopId);
+        }
+
+        function gameOver() {
+            isPlaying = false;
+            cancelAnimationFrame(gameLoopId);
+            
+            // Handle highscore local saves
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('focus_game_highscore', highScore);
+                highScoreEl.innerText = highScore;
+            }
+
+            // Toggle Overlays
+            overlayScreen.classList.remove('hidden');
+            startPrompt.classList.add('hidden');
+            gameOverPrompt.classList.remove('hidden');
+            encouragementText.innerText = getEncouragement(score);
+        }
+
+        // Draw default splash screen view
+        drawGame();
 
     </script>
 </body>
