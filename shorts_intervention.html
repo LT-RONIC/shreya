@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>An Intervention...</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Fallback dark bg */
+            margin: 0;
+            overflow: hidden; /* Prevent body scroll, handle scroll in container */
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .scroll-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        .scroll-section {
+            scroll-snap-align: start;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #reality-screen {
+            transition: opacity 1.5s ease-in-out, visibility 1.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="text-white h-screen w-screen flex justify-center items-center bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 animate-gradient-x">
+
+    <!-- Reality Screen (Hidden initially, shown after breaking the loop) -->
+    <div id="reality-screen" class="fixed inset-0 z-50 bg-gradient-to-tr from-green-400 to-blue-500 opacity-0 invisible flex flex-col justify-center items-center text-center p-6">
+        <i data-lucide="sun" class="w-24 h-24 text-yellow-300 mb-6 animate-float"></i>
+        <h1 class="text-5xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">Welcome Back.</h1>
+        <p class="text-xl md:text-2xl text-white font-medium max-w-lg mb-8 drop-shadow-md">
+            The real world is much more beautiful than a 6-inch screen. Go outside, call a friend, or just look at the sky. 
+        </p>
+        <p class="text-lg text-white/80 font-light italic">
+            Love, your sibling who cares about your brain. ❤️
+        </p>
+    </div>
+
+    <!-- Mobile App Container -->
+    <div id="app-container" class="relative w-full h-full max-w-md md:h-[85vh] md:rounded-[2.5rem] overflow-hidden bg-black md:border-[8px] border-gray-800 shadow-2xl transition-all duration-1000">
+        
+        <!-- Top UI Elements (Fake Status Bar) -->
+        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-20 pointer-events-none">
+            <span class="text-xs font-semibold tracking-wider text-white/50">INTERVENTION.APP</span>
+            <div class="flex gap-2">
+                <i data-lucide="battery-warning" class="w-4 h-4 text-red-500"></i>
+            </div>
+        </div>
+
+        <!-- Fake "Time Wasted" Tracker -->
+        <div class="absolute top-12 left-1/2 -translate-x-1/2 z-20 glass-panel px-4 py-2 rounded-full pointer-events-none">
+            <p class="text-xs font-semibold text-white/80 flex items-center gap-2">
+                <i data-lucide="clock" class="w-3 h-3 text-purple-400"></i>
+                Scroll Time: <span id="time-ticker">00:00:00</span>
+            </p>
+        </div>
+
+        <!-- The Scrolling Feed -->
+        <div class="scroll-container no-scrollbar relative z-10" id="feed">
+            
+            <!-- Section 1: The Hook -->
+            <div class="scroll-section p-8 text-center">
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0"></div>
+                <div class="z-10 flex flex-col items-center">
+                    <div class="w-20 h-20 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6 animate-pulse-slow">
+                        <i data-lucide="smartphone" class="w-10 h-10 text-indigo-400"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4 reveal-text">Hey there.</h2>
+                    <p class="text-lg text-gray-300 mb-8 reveal-text text-balance">
+                        I know you love swiping. So I made this just for you. Keep scrolling like you normally do...
+                    </p>
+                    <div class="animate-bounce mt-12 text-white/50">
+                        <i data-lucide="chevron-down" class="w-8 h-8"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Dopamine Trap -->
+            <div class="scroll-section p-8 text-center bg-zinc-950 relative">
+                <div class="absolute right-4 bottom-1/4 flex flex-col gap-6 z-20">
+                    <div class="flex flex-col items-center gap-1 cursor-pointer fake-action">
+                        <div class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"><i data-lucide="heart" class="w-6 h-6 text-white"></i></div>
+                        <span class="text-xs font-bold">12K</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 cursor-pointer fake-action">
+                        <div class="p-3 bg-white/10 rounded-full hover:bg-white/20 transition"><i data-lucide="message-circle" class="w-6 h-6 text-white"></i></div>
+                        <span class="text-xs font-bold">450</span>
+                    </div>
+                </div>
+                
+                <div class="z-10 flex flex-col items-center max-w-[85%] mr-auto">
+                    <i data-lucide="zap" class="w-12 h-12 text-yellow-400 mb-4 reveal-text"></i>
+                    <h2 class="text-2xl font-bold mb-3 text-left w-full reveal-text">The Dopamine Loop</h2>
+                    <div class="glass-panel p-5 rounded-2xl reveal-text text-left">
+                        <p class="text-sm text-gray-300 leading-relaxed">
+                            Swipe. Swipe. Swipe.<br><br>
+                            Every short video gives you a tiny hit of dopamine. It feels good for 15 seconds, but it's tricking your brain into needing more, faster. It's a trap, and you're stuck in it.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Attention Span -->
+            <div class="scroll-section p-8 text-center bg-black relative overflow-hidden">
+                <!-- Glitch effect background elements -->
+                <div class="absolute top-1/4 left-1/4 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-1/4 right-1/4 w-40 h-40 bg-pink-600/20 rounded-full blur-3xl"></div>
+
+                <div class="z-10 flex flex-col items-center max-w-[85%] mr-auto">
+                    <i data-lucide="brain-circuit" class="w-12 h-12 text-pink-400 mb-4 reveal-text"></i>
+                    <h2 class="text-2xl font-bold mb-3 text-left w-full reveal-text">Brain Rot is Real</h2>
+                    <div class="glass-panel p-5 rounded-2xl reveal-text text-left border-pink-500/30">
+                        <p class="text-sm text-gray-300 leading-relaxed">
+                            Did you know constant fast-switching clips train your brain to jump quickly? <br><br>
+                            This literally fragments your attention span, making it harder to focus on movies, books, or real conversations without feeling bored.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: The Time Thief -->
+            <div class="scroll-section p-8 text-center bg-zinc-950 relative">
+                <div class="z-10 flex flex-col items-center w-full">
+                    <div class="relative w-32 h-32 mb-6 reveal-text">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#333" stroke-width="8"></circle>
+                            <circle id="time-circle" cx="50" cy="50" r="45" fill="none" stroke="#ef4444" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" class="transition-all duration-1000"></circle>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i data-lucide="hourglass" class="w-8 h-8 text-red-500 animate-pulse"></i>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold mb-4 reveal-text">The Time Thief</h2>
+                    <p class="text-base text-gray-400 mb-8 max-w-xs text-balance reveal-text">
+                        Hours vanish into the void. Real life, real experiences, and your actual goals are waiting outside this glowing rectangle.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Section 5: The Choice -->
+            <div class="scroll-section p-8 text-center bg-gradient-to-b from-zinc-950 to-indigo-950 relative">
+                <div class="z-10 flex flex-col items-center w-full mt-10">
+                    <h2 class="text-4xl font-extrabold mb-6 reveal-text text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                        Enough is Enough.
+                    </h2>
+                    <p class="text-lg text-gray-300 mb-12 max-w-xs reveal-text">
+                        You've scrolled enough for today. Prove you have control over the algorithm.
+                    </p>
+
+                    <button id="break-loop-btn" class="reveal-text group relative px-8 py-4 bg-white text-black font-bold text-lg rounded-full overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:shadow-[0_0_60px_rgba(255,255,255,0.5)] transition-all transform hover:scale-105 active:scale-95">
+                        <span class="relative z-10 flex items-center gap-2">
+                            <i data-lucide="power" class="w-5 h-5"></i> Break The Loop
+                        </span>
+                        <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                    </button>
+                    
+                    <p class="mt-6 text-xs text-white/30 reveal-text">
+                        (Or keep scrolling back up like a zombie)
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Custom Toast Notification Container -->
+        <div id="toast-container" class="absolute bottom-20 left-0 w-full flex justify-center z-50 pointer-events-none"></div>
+
+    </div>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // --- Fake Time Tracker Logic ---
+        const timeTicker = document.getElementById('time-ticker');
+        let secondsPassed = 0;
+        
+        // Speed up time artificially to make a point
+        setInterval(() => {
+            secondsPassed += 17; // Adds 17 seconds every real second
+            
+            const hours = Math.floor(secondsPassed / 3600);
+            const minutes = Math.floor((secondsPassed % 3600) / 60);
+            const seconds = secondsPassed % 60;
+            
+            timeTicker.innerText = 
+                String(hours).padStart(2, '0') + ':' + 
+                String(minutes).padStart(2, '0') + ':' + 
+                String(seconds).padStart(2, '0');
+        }, 1000);
+
+        // --- Intersection Observer for Animations ---
+        const observerOptions = {
+            root: document.getElementById('feed'),
+            rootMargin: '0px',
+            threshold: 0.5 // Trigger when 50% of the element is visible
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Find all reveal-text elements in the active section
+                    const elementsToReveal = entry.target.querySelectorAll('.reveal-text');
+                    elementsToReveal.forEach((el, index) => {
+                        // Stagger the animations
+                        setTimeout(() => {
+                            el.classList.add('visible');
+                        }, index * 200); 
+                    });
+
+                    // Specific animation for the circle in section 4
+                    if(entry.target.querySelector('#time-circle')) {
+                        setTimeout(() => {
+                            document.getElementById('time-circle').style.strokeDashoffset = '0';
+                        }, 500);
+                    }
+                } else {
+                    // Reset elements when they leave the screen so they re-animate
+                    const elementsToHide = entry.target.querySelectorAll('.reveal-text');
+                    elementsToHide.forEach(el => {
+                        el.classList.remove('visible');
+                    });
+                    
+                    if(entry.target.querySelector('#time-circle')) {
+                        document.getElementById('time-circle').style.strokeDashoffset = '283';
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('.scroll-section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- STREAMING_CHUNK: Adding interactive toast notifications and button logic... ---
+        // --- Fake Action Buttons (Like/Comment) ---
+        const fakeActions = document.querySelectorAll('.fake-action');
+        const toastContainer = document.getElementById('toast-container');
+
+        fakeActions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                showToast("You tapped this, but your brain felt nothing.");
+            });
+        });
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm px-4 py-2 rounded-full shadow-lg transform transition-all duration-300 translate-y-10 opacity-0 mb-2';
+            toast.innerText = message;
+            
+            toastContainer.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            }, 10);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-y-10', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Break The Loop Logic ---
+        const breakBtn = document.getElementById('break-loop-btn');
+        const appContainer = document.getElementById('app-container');
+        const realityScreen = document.getElementById('reality-screen');
+
+        breakBtn.addEventListener('click', () => {
+            // Add a shatter/shrink effect to the phone container
+            appContainer.style.transform = 'scale(0.8) translateY(100px)';
+            appContainer.style.opacity = '0';
+            appContainer.style.filter = 'blur(10px)';
+            
+            setTimeout(() => {
+                appContainer.style.display = 'none';
+                // Show the beautiful reality screen
+                realityScreen.classList.remove('invisible');
+                realityScreen.style.opacity = '1';
+                
+                // Change body background to something bright
+                document.body.classList.remove('from-indigo-900', 'via-purple-900', 'to-slate-900');
+                document.body.classList.add('from-sky-300', 'to-emerald-200');
+            }, 800);
+        });
+
+    </script>
+</body>
+</html>
