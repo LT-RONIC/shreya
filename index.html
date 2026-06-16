@@ -265,6 +265,7 @@
                 String(seconds).padStart(2, '0');
         }, 1000);
 
+        // --- STREAMING_CHUNK:Adding intersection observer for scroll animations... ---
         // --- Intersection Observer for Animations ---
         const observerOptions = {
             root: document.getElementById('feed'),
@@ -309,7 +310,7 @@
             observer.observe(section);
         });
 
-        // --- STREAMING_CHUNK: Adding interactive toast notifications and button logic... ---
+        // --- STREAMING_CHUNK:Implementing fake buttons and toast notifications... ---
         // --- Fake Action Buttons (Like/Comment) ---
         const fakeActions = document.querySelectorAll('.fake-action');
         const toastContainer = document.getElementById('toast-container');
@@ -339,6 +340,7 @@
             }, 3000);
         }
 
+        // --- STREAMING_CHUNK:Implementing the grand finale button logic... ---
         // --- Break The Loop Logic ---
         const breakBtn = document.getElementById('break-loop-btn');
         const appContainer = document.getElementById('app-container');
